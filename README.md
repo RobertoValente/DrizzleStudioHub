@@ -1,1 +1,1 @@
-# DrizzleStudioManager
+# DrizzleStudioHub
