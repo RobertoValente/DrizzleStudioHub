@@ -1,0 +1,10 @@
+{
+    "dialect": "mysql",
+    "dbCredentials": {
+        "username": "root",
+        "password": "password",
+        "hostname": "google.com",
+        "database": "MasterDB",
+        "port": 3306
+    }
+}

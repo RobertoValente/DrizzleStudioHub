@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 
 router.get('/', (req, res) => {
     const databases = getDatabases();
@@ -96,6 +97,48 @@ router.delete('/:id', (req, res) => {
     }
 
     return res.json({ status: true, message: `Database configuration with ID ${id} deleted successfully!` });
+});
+
+router.post('/launch/:id', (req, res) => {
+    const { id } = req.params;
+
+    if (!id) return res.json({ status: false, message: 'Bad Request: Missing Parameter ID' });
+
+    const databases = getDatabases();
+    const database = databases.find(db => db.name === id + '.json');
+
+    if (!database) return res.json({ status: false, message: 'Not Found: Database configuration does not exist' });
+
+    const configContent = `import { defineConfig } from 'drizzle-kit';
+
+export default defineConfig({
+    out: './drizzle',
+    dialect: '${database.content.dialect}',
+    dbCredentials: {
+        url: '${database.content.dialect}://${database.content.dbCredentials.username}:${database.content.dbCredentials.password}@${database.content.dbCredentials.hostname}:${database.content.dbCredentials.port}/${database.content.dbCredentials.database}',
+    },
+});`;
+
+    fs.writeFileSync(path.join(__dirname, `../../../drizzle.config.js`), configContent);
+
+    //launch process with this command: npx drizzle-kit studio
+    const studioProcess = spawn('npx', ['drizzle-kit', 'studio'], {
+        cwd: path.join(__dirname, '../../../'),
+    });
+
+    console.log(`Launching Drizzle Studio for database: ${id}`);
+    
+    studioProcess.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+    });
+    
+    studioProcess.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+    });
+
+
+
+    return res.json({ status: true, message: 'Studio launched successfully!', config: database.content });
 });
 
 function getDatabases() {

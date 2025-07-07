@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drizzle Studio Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
+        }
+
+        .databases-list {
+            margin-top: 20px;
+        }
+
+        .database-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: background-color 0.3s ease;
+        }
+
+        .database-item:hover {
+            background: #e9ecef;
+        }
+
+        .database-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .database-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .database-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .database-info {
+            color: #666;
+            font-size: 0.9rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .running-studios {
+            margin-top: 30px;
+        }
+
+        .studio-item {
+            background: #e8f5e8;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #2ed573;
+        }
+
+        .studio-info {
+            flex: 1;
+        }
+
+        .studio-url {
+            color: #1e90ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .studio-url:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .database-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-database"></i> Drizzle Studio Hub</h1>
+            <p>Manage your database configurations and launch Drizzle Studio instances</p>
+        </div>
+
+        <div class="alert alert-success" id="successAlert"></div>
+        <div class="alert alert-error" id="errorAlert"></div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2><i class="fas fa-plus-circle"></i> Add Database Configuration</h2>
+                <form id="databaseForm">
+                    <div class="form-group">
+                        <label for="dialect">Database Dialect</label>
+                        <select id="dialect" name="dialect" required>
+                            <option value="mysql">MySQL</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hostname">Hostname</label>
+                        <input type="text" id="hostname" name="hostname" placeholder="localhost" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="port">Port</label>
+                        <input type="number" id="port" name="port" placeholder="3306" value="3306" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="database">Database Name</label>
+                        <input type="text" id="database" name="database" placeholder="my_database" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="root" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="password" required>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i> Save Configuration
+                    </button>
+                    <button type="button" class="btn btn-warning" id="cancelEdit" style="display: none;" onclick="cancelEdit()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-list"></i> Database Configurations</h2>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Loading configurations...</p>
+                </div>
+                <div id="databasesList" class="databases-list"></div>
+                
+                <div class="running-studios" id="runningStudios">
+                    <h3><i class="fas fa-play-circle"></i> Running Studio Instances</h3>
+                    <div id="studiosList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Database Configuration</h3>
+                <button class="close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editId" name="id">
+                <div class="form-group">
+                    <label for="editDialect">Database Dialect</label>
+                    <select id="editDialect" name="dialect" required>
+                        <option value="mysql">MySQL</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editHostname">Hostname</label>
+                    <input type="text" id="editHostname" name="hostname" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPort">Port</label>
+                    <input type="number" id="editPort" name="port" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDatabase">Database Name</label>
+                    <input type="text" id="editDatabase" name="database" required>
+                </div>
+                <div class="form-group">
+                    <label for="editUsername">Username</label>
+                    <input type="text" id="editUsername" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPassword">Password</label>
+                    <input type="password" id="editPassword" name="password" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-save"></i> Update Configuration
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let editingId = null;
+        let runningStudios = new Map();
+
+        // Load databases on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDatabases();
+        });
+
+        // Form submission for creating/updating database
+        document.getElementById('databaseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            data.port = parseInt(data.port);
+
+            try {
+                const response = await fetch('/api/databases', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                
+                if (result.status) {
+                    showAlert('success', result.message);
+                    this.reset();
+                    loadDatabases();
+                } else {
+                    showAlert('error', result.message);
+                }
+            } catch (error) {
+                showAlert('error', 'Error saving database configuration');
+                console.error('Error:', error);
+            }
+        });
+
+        // Edit form submission
+        document.getElementById('editForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            const id = data.id;
+            delete data.id;
+            data.port = parseInt(data.port);
+
+            try {
+                const response = await fetch(`/api/databases/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                
+                if (result.status) {
+                    showAlert('success', result.message);
+                    closeEditModal();
+                    loadDatabases();
+                } else {
+                    showAlert('error', result.message);
+                }
+            } catch (error) {
+                showAlert('error', 'Error updating database configuration');
+                console.error('Error:', error);
+            }
+        });
+
+        async function loadDatabases() {
+            const loading = document.getElementById('loading');
+            const list = document.getElementById('databasesList');
+            
+            loading.style.display = 'block';
+            list.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/databases');
+                const result = await response.json();
+
+                if (result.status && result.data) {
+                    if (result.data.length === 0) {
+                        list.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No database configurations found. Add one above to get started!</p>';
+                    } else {
+                        list.innerHTML = result.data.map(db => {
+                            const id = db.name.replace('.json', '');
+                            const config = db.content;
+                            const isRunning = runningStudios.has(id);
+                            
+                            return `
+                                <div class="database-item">
+                                    <div class="database-header">
+                                        <div class="database-name">
+                                            <i class="fas fa-database"></i> ${config.dbCredentials.database}
+                                            ${isRunning ? '<span style="color: #2ed573; margin-left: 10px;"><i class="fas fa-play-circle"></i> Running</span>' : ''}
+                                        </div>
+                                        <div class="database-actions">
+                                            ${!isRunning ? `<button class="btn btn-success" onclick="launchStudio('${id}')">
+                                                <i class="fas fa-play"></i> Launch Studio
+                                            </button>` : `<button class="btn btn-danger" onclick="stopStudio('${id}')">
+                                                <i class="fas fa-stop"></i> Stop Studio
+                                            </button>`}
+                                            <button class="btn btn-warning" onclick="editDatabase('${id}')">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-danger" onclick="deleteDatabase('${id}')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="database-info">
+                                        <div><strong>Host:</strong> ${config.dbCredentials.hostname}:${config.dbCredentials.port}</div>
+                                        <div><strong>Username:</strong> ${config.dbCredentials.username}</div>
+                                        <div><strong>Dialect:</strong> ${config.dialect}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                } else {
+                    list.innerHTML = '<p style="text-align: center; color: #f00;">Error loading database configurations</p>';
+                }
+            } catch (error) {
+                list.innerHTML = '<p style="text-align: center; color: #f00;">Error loading database configurations</p>';
+                console.error('Error:', error);
+            } finally {
+                loading.style.display = 'none';
+            }
+
+            updateStudiosList();
+        }
+
+        async function editDatabase(id) {
+            try {
+                const response = await fetch(`/api/databases/${id}`);
+                const result = await response.json();
+
+                if (result.status && result.data) {
+                    const config = result.data.content;
+                    
+                    document.getElementById('editId').value = id;
+                    document.getElementById('editDialect').value = config.dialect;
+                    document.getElementById('editHostname').value = config.dbCredentials.hostname;
+                    document.getElementById('editPort').value = config.dbCredentials.port;
+                    document.getElementById('editDatabase').value = config.dbCredentials.database;
+                    document.getElementById('editUsername').value = config.dbCredentials.username;
+                    document.getElementById('editPassword').value = config.dbCredentials.password;
+
+                    document.getElementById('editModal').style.display = 'block';
+                } else {
+                    showAlert('error', 'Error loading database configuration for editing');
+                }
+            } catch (error) {
+                showAlert('error', 'Error loading database configuration for editing');
+                console.error('Error:', error);
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        async function deleteDatabase(id) {
+            if (confirm('Are you sure you want to delete this database configuration?')) {
+                try {
+                    const response = await fetch(`/api/databases/${id}`, {
+                        method: 'DELETE',
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.status) {
+                        showAlert('success', result.message);
+                        // Stop studio if running
+                        if (runningStudios.has(id)) {
+                            stopStudio(id);
+                        }
+                        loadDatabases();
+                    } else {
+                        showAlert('error', result.message);
+                    }
+                } catch (error) {
+                    showAlert('error', 'Error deleting database configuration');
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        async function launchStudio(id) {
+            try {
+                const response = await fetch(`/api/studio/launch/${id}`, {
+                    method: 'POST',
+                });
+
+                const result = await response.json();
+                
+                if (result.status) {
+                    runningStudios.set(id, {
+                        port: result.port,
+                        url: result.url
+                    });
+                    showAlert('success', `Drizzle Studio launched successfully! Access it at: ${result.url}`);
+                    loadDatabases();
+                } else {
+                    showAlert('error', result.message);
+                }
+            } catch (error) {
+                showAlert('error', 'Error launching Drizzle Studio');
+                console.error('Error:', error);
+            }
+        }
+
+        async function stopStudio(id) {
+            try {
+                const response = await fetch(`/api/studio/stop/${id}`, {
+                    method: 'POST',
+                });
+
+                const result = await response.json();
+                
+                if (result.status) {
+                    runningStudios.delete(id);
+                    showAlert('success', result.message);
+                    loadDatabases();
+                } else {
+                    showAlert('error', result.message);
+                }
+            } catch (error) {
+                showAlert('error', 'Error stopping Drizzle Studio');
+                console.error('Error:', error);
+            }
+        }
+
+        function updateStudiosList() {
+            const studiosList = document.getElementById('studiosList');
+            
+            if (runningStudios.size === 0) {
+                studiosList.innerHTML = '<p style="text-align: center; color: #666; padding: 10px;">No studio instances running</p>';
+            } else {
+                studiosList.innerHTML = Array.from(runningStudios.entries()).map(([id, studio]) => `
+                    <div class="studio-item">
+                        <div class="studio-info">
+                            <div><strong>Database ID:</strong> ${id}</div>
+                            <div><strong>URL:</strong> <a href="${studio.url}" target="_blank" class="studio-url">${studio.url}</a></div>
+                        </div>
+                        <button class="btn btn-danger" onclick="stopStudio('${id}')">
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function showAlert(type, message) {
+            const alertId = type === 'success' ? 'successAlert' : 'errorAlert';
+            const alert = document.getElementById(alertId);
+            
+            // Hide other alerts
+            document.getElementById('successAlert').style.display = 'none';
+            document.getElementById('errorAlert').style.display = 'none';
+            
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+            
+            // Scroll to top to show alert
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        }
+    </script>
+</body>
+</html>
