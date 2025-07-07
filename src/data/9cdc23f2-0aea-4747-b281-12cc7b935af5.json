@@ -1,0 +1,10 @@
+{
+    "dialect": "mysql",
+    "dbCredentials": {
+        "username": "",
+        "password": "",
+        "hostname": "",
+        "database": "",
+        "port": 3306
+    }
+}
