@@ -13,181 +13,336 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
         .header {
             text-align: center;
-            color: white;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
         }
 
         .header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header .emoji {
+            font-size: 2rem;
+            margin-right: 10px;
         }
 
         .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+            font-size: 1rem;
+            color: #9ca3af;
+            font-weight: 400;
         }
 
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
-            margin-bottom: 30px;
+        .main-content {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
         }
 
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+        .sidebar {
+            flex: 0 0 300px;
+            background: #262626;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #404040;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
+        .content {
+            flex: 1;
+            background: #262626;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #404040;
+            min-height: 500px;
         }
 
-        .card h2 {
-            color: #333;
+        .sidebar h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #ffffff;
             margin-bottom: 20px;
             display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: inline-flex;
             align-items: center;
             gap: 8px;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        .add-button {
+            width: 100%;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        .add-button:hover {
+            background: #2563eb;
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
-        }
-
-        .databases-list {
-            margin-top: 20px;
+        .database-list {
+            list-style: none;
         }
 
         .database-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid #667eea;
-            transition: background-color 0.3s ease;
+            background: #1f1f1f;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
         }
 
         .database-item:hover {
-            background: #e9ecef;
+            background: #2a2a2a;
+            border-color: #525252;
         }
 
-        .database-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 10px;
+        .database-item.active {
+            background: #1e40af;
+            border-color: #3b82f6;
         }
 
         .database-name {
-            font-weight: 600;
-            color: #333;
-            font-size: 1.1rem;
-        }
-
-        .database-actions {
+            font-weight: 500;
+            color: #ffffff;
+            margin-bottom: 4px;
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
         }
 
         .database-info {
-            color: #666;
-            font-size: 0.9rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
+            font-size: 12px;
+            color: #9ca3af;
         }
 
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
+        .database-actions {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .database-item:hover .database-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: #404040;
+            color: #ffffff;
+        }
+
+        .action-btn.delete:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6b7280;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-indicator.running {
+            background: #10b981;
+            box-shadow: 0 0 6px #10b981;
+        }
+
+        .content h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #ffffff;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .welcome-screen i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #525252;
+        }
+
+        .welcome-screen h3 {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-weight: 400;
+        }
+
+        .database-details {
             display: none;
         }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .database-details.active {
+            display: block;
         }
 
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #404040;
+        }
+
+        .detail-info {
+            flex: 1;
+        }
+
+        .detail-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #ffffff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .detail-subtitle {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .connection-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .detail-card {
+            background: #1f1f1f;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .detail-card h4 {
+            font-size: 12px;
+            font-weight: 500;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .detail-card p {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .studio-link {
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .studio-link:hover {
+            background: #059669;
+            text-decoration: none;
         }
 
         .modal {
@@ -197,8 +352,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 1000;
+            backdrop-filter: blur(4px);
         }
 
         .modal-content {
@@ -206,9 +362,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
+            background: #262626;
+            border: 1px solid #404040;
+            border-radius: 12px;
+            padding: 24px;
             width: 90%;
             max-width: 500px;
             max-height: 80vh;
@@ -219,191 +376,230 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #404040;
+        }
+
+        .modal-header h3 {
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 1.2rem;
         }
 
         .close {
             background: none;
             border: none;
-            font-size: 24px;
+            color: #9ca3af;
             cursor: pointer;
-            color: #666;
+            font-size: 20px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
         }
 
-        .running-studios {
-            margin-top: 30px;
+        .close:hover {
+            background: #404040;
+            color: #ffffff;
         }
 
-        .studio-item {
-            background: #e8f5e8;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid #2ed573;
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        .studio-info {
-            flex: 1;
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #e5e7eb;
+            font-weight: 500;
+            font-size: 14px;
         }
 
-        .studio-url {
-            color: #1e90ff;
-            text-decoration: none;
-            font-weight: 600;
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #1f1f1f;
+            border: 1px solid #404040;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
         }
 
-        .studio-url:hover {
-            text-decoration: underline;
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #064e3b;
+            color: #a7f3d0;
+            border: 1px solid #047857;
+        }
+
+        .alert-error {
+            background: #7f1d1d;
+            color: #fca5a5;
+            border: 1px solid #dc2626;
         }
 
         @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
+            .main-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .sidebar {
+                flex: none;
             }
             
             .header h1 {
                 font-size: 2rem;
-            }
-            
-            .database-info {
-                grid-template-columns: 1fr;
             }
         }
 
         .loading {
             display: none;
             text-align: center;
-            padding: 20px;
+            padding: 40px 20px;
+            color: #9ca3af;
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 3px solid #404040;
+            border-top: 3px solid #3b82f6;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
+            margin: 0 auto 12px;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: #525252;
+        }
+
+        .empty-state h3 {
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-database"></i> Drizzle Studio Hub</h1>
-            <p>Manage your database configurations and launch Drizzle Studio instances</p>
+            <h1>
+                <span class="emoji">👋</span>
+                Welcome to Drizzle Studio
+            </h1>
+            <p>Connecting to the Drizzle Kit on localhost:4983</p>
         </div>
 
         <div class="alert alert-success" id="successAlert"></div>
         <div class="alert alert-error" id="errorAlert"></div>
 
-        <div class="dashboard">
-            <div class="card">
-                <h2><i class="fas fa-plus-circle"></i> Add Database Configuration</h2>
-                <form id="databaseForm">
-                    <div class="form-group">
-                        <label for="dialect">Database Dialect</label>
-                        <select id="dialect" name="dialect" required>
-                            <option value="mysql">MySQL</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="hostname">Hostname</label>
-                        <input type="text" id="hostname" name="hostname" placeholder="localhost" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="port">Port</label>
-                        <input type="number" id="port" name="port" placeholder="3306" value="3306" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="database">Database Name</label>
-                        <input type="text" id="database" name="database" placeholder="my_database" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="root" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="password" required>
-                    </div>
-                    <button type="submit" class="btn">
-                        <i class="fas fa-save"></i> Save Configuration
-                    </button>
-                    <button type="button" class="btn btn-warning" id="cancelEdit" style="display: none;" onclick="cancelEdit()">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2><i class="fas fa-list"></i> Database Configurations</h2>
+        <div class="main-content">
+            <div class="sidebar">
+                <h2><i class="fas fa-database"></i> Databases</h2>
+                <button class="add-button" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> Add Database
+                </button>
+                
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
-                    <p>Loading configurations...</p>
+                    <p>Loading...</p>
                 </div>
-                <div id="databasesList" class="databases-list"></div>
                 
-                <div class="running-studios" id="runningStudios">
-                    <h3><i class="fas fa-play-circle"></i> Running Studio Instances</h3>
-                    <div id="studiosList"></div>
+                <ul class="database-list" id="databasesList"></ul>
+            </div>
+
+            <div class="content">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <h3>Select a database</h3>
+                    <p>Choose a database from the sidebar to view details and launch Drizzle Studio</p>
+                </div>
+
+                <div class="database-details" id="databaseDetails">
+                    <!-- Database details will be populated here -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div class="modal" id="editModal">
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="databaseModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-edit"></i> Edit Database Configuration</h3>
-                <button class="close" onclick="closeEditModal()">&times;</button>
+                <h3 id="modalTitle"><i class="fas fa-plus"></i> Add Database</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
             </div>
-            <form id="editForm">
+            <form id="databaseForm">
                 <input type="hidden" id="editId" name="id">
                 <div class="form-group">
-                    <label for="editDialect">Database Dialect</label>
-                    <select id="editDialect" name="dialect" required>
+                    <label for="dialect">Database Dialect</label>
+                    <select id="dialect" name="dialect" required>
                         <option value="mysql">MySQL</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="editHostname">Hostname</label>
-                    <input type="text" id="editHostname" name="hostname" required>
+                    <label for="hostname">Hostname</label>
+                    <input type="text" id="hostname" name="hostname" placeholder="localhost" required>
                 </div>
                 <div class="form-group">
-                    <label for="editPort">Port</label>
-                    <input type="number" id="editPort" name="port" required>
+                    <label for="port">Port</label>
+                    <input type="number" id="port" name="port" placeholder="3306" value="3306" required>
                 </div>
                 <div class="form-group">
-                    <label for="editDatabase">Database Name</label>
-                    <input type="text" id="editDatabase" name="database" required>
+                    <label for="database">Database Name</label>
+                    <input type="text" id="database" name="database" placeholder="my_database" required>
                 </div>
                 <div class="form-group">
-                    <label for="editUsername">Username</label>
-                    <input type="text" id="editUsername" name="username" required>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="root" required>
                 </div>
                 <div class="form-group">
-                    <label for="editPassword">Password</label>
-                    <input type="password" id="editPassword" name="password" required>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="password" required>
                 </div>
-                <button type="submit" class="btn">
-                    <i class="fas fa-save"></i> Update Configuration
-                </button>
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn" id="submitBtn">
+                        <i class="fas fa-save"></i> Save Database
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
     <script>
-        let editingId = null;
+        let selectedDatabase = null;
         let runningStudios = new Map();
 
         // Load databases on page load
@@ -417,11 +613,17 @@
             
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
+            const isEdit = !!data.id;
+            const id = data.id;
+            delete data.id;
             data.port = parseInt(data.port);
 
             try {
-                const response = await fetch('/api/databases', {
-                    method: 'POST',
+                const url = isEdit ? `/api/databases/${id}` : '/api/databases';
+                const method = isEdit ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -432,47 +634,13 @@
                 
                 if (result.status) {
                     showAlert('success', result.message);
-                    this.reset();
+                    closeModal();
                     loadDatabases();
                 } else {
                     showAlert('error', result.message);
                 }
             } catch (error) {
                 showAlert('error', 'Error saving database configuration');
-                console.error('Error:', error);
-            }
-        });
-
-        // Edit form submission
-        document.getElementById('editForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            const id = data.id;
-            delete data.id;
-            data.port = parseInt(data.port);
-
-            try {
-                const response = await fetch(`/api/databases/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                const result = await response.json();
-                
-                if (result.status) {
-                    showAlert('success', result.message);
-                    closeEditModal();
-                    loadDatabases();
-                } else {
-                    showAlert('error', result.message);
-                }
-            } catch (error) {
-                showAlert('error', 'Error updating database configuration');
                 console.error('Error:', error);
             }
         });
@@ -490,7 +658,13 @@
 
                 if (result.status && result.data) {
                     if (result.data.length === 0) {
-                        list.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No database configurations found. Add one above to get started!</p>';
+                        list.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-database"></i>
+                                <h3>No databases</h3>
+                                <p>Add your first database to get started</p>
+                            </div>
+                        `;
                     } else {
                         list.innerHTML = result.data.map(db => {
                             const id = db.name.replace('.json', '');
@@ -498,46 +672,126 @@
                             const isRunning = runningStudios.has(id);
                             
                             return `
-                                <div class="database-item">
-                                    <div class="database-header">
-                                        <div class="database-name">
-                                            <i class="fas fa-database"></i> ${config.dbCredentials.database}
-                                            ${isRunning ? '<span style="color: #2ed573; margin-left: 10px;"><i class="fas fa-play-circle"></i> Running</span>' : ''}
-                                        </div>
-                                        <div class="database-actions">
-                                            ${!isRunning ? `<button class="btn btn-success" onclick="launchStudio('${id}')">
-                                                <i class="fas fa-play"></i> Launch Studio
-                                            </button>` : `<button class="btn btn-danger" onclick="stopStudio('${id}')">
-                                                <i class="fas fa-stop"></i> Stop Studio
-                                            </button>`}
-                                            <button class="btn btn-warning" onclick="editDatabase('${id}')">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-danger" onclick="deleteDatabase('${id}')">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </div>
+                                <li class="database-item" data-id="${id}" onclick="selectDatabase('${id}')">
+                                    <div class="database-name">
+                                        <span class="status-indicator ${isRunning ? 'running' : ''}"></span>
+                                        ${config.dbCredentials.database}
                                     </div>
                                     <div class="database-info">
-                                        <div><strong>Host:</strong> ${config.dbCredentials.hostname}:${config.dbCredentials.port}</div>
-                                        <div><strong>Username:</strong> ${config.dbCredentials.username}</div>
-                                        <div><strong>Dialect:</strong> ${config.dialect}</div>
+                                        ${config.dbCredentials.hostname}:${config.dbCredentials.port}
                                     </div>
-                                </div>
+                                    <div class="database-actions">
+                                        <button class="action-btn" onclick="event.stopPropagation(); editDatabase('${id}')" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete" onclick="event.stopPropagation(); deleteDatabase('${id}')" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </li>
                             `;
                         }).join('');
                     }
                 } else {
-                    list.innerHTML = '<p style="text-align: center; color: #f00;">Error loading database configurations</p>';
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>Failed to load databases</p></div>';
                 }
             } catch (error) {
-                list.innerHTML = '<p style="text-align: center; color: #f00;">Error loading database configurations</p>';
+                list.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>Failed to load databases</p></div>';
                 console.error('Error:', error);
             } finally {
                 loading.style.display = 'none';
             }
+        }
 
-            updateStudiosList();
+        async function selectDatabase(id) {
+            // Update selection
+            document.querySelectorAll('.database-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-id="${id}"]`).classList.add('active');
+            
+            selectedDatabase = id;
+            
+            // Hide welcome screen and show details
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('databaseDetails').classList.add('active');
+            
+            // Load database details
+            try {
+                const response = await fetch(`/api/databases/${id}`);
+                const result = await response.json();
+
+                if (result.status && result.data) {
+                    const config = result.data.content;
+                    const isRunning = runningStudios.has(id);
+                    const studioInfo = runningStudios.get(id);
+                    
+                    document.getElementById('databaseDetails').innerHTML = `
+                        <div class="detail-header">
+                            <div class="detail-info">
+                                <div class="detail-title">
+                                    <span class="status-indicator ${isRunning ? 'running' : ''}"></span>
+                                    ${config.dbCredentials.database}
+                                    ${isRunning ? '<span style="color: #10b981; font-size: 0.8em;">• Running</span>' : ''}
+                                </div>
+                                <div class="detail-subtitle">
+                                    ${config.dialect} • ${config.dbCredentials.hostname}:${config.dbCredentials.port}
+                                </div>
+                            </div>
+                            <div class="detail-actions">
+                                ${!isRunning ? 
+                                    `<button class="btn" onclick="launchStudio('${id}')">
+                                        <i class="fas fa-play"></i> Launch Studio
+                                    </button>` : 
+                                    `<a href="${studioInfo.url}" target="_blank" class="studio-link">
+                                        <i class="fas fa-external-link-alt"></i> Open Studio
+                                    </a>
+                                    <button class="btn btn-danger" onclick="stopStudio('${id}')">
+                                        <i class="fas fa-stop"></i> Stop
+                                    </button>`
+                                }
+                                <button class="btn btn-secondary" onclick="editDatabase('${id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="connection-details">
+                            <div class="detail-card">
+                                <h4>Host</h4>
+                                <p>${config.dbCredentials.hostname}</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Port</h4>
+                                <p>${config.dbCredentials.port}</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Database</h4>
+                                <p>${config.dbCredentials.database}</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Username</h4>
+                                <p>${config.dbCredentials.username}</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Dialect</h4>
+                                <p>${config.dialect}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading database details:', error);
+                showAlert('error', 'Error loading database details');
+            }
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus"></i> Add Database';
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> Save Database';
+            document.getElementById('databaseForm').reset();
+            document.getElementById('editId').value = '';
+            document.getElementById('databaseModal').style.display = 'block';
         }
 
         async function editDatabase(id) {
@@ -548,15 +802,18 @@
                 if (result.status && result.data) {
                     const config = result.data.content;
                     
+                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Database';
+                    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> Update Database';
+                    
                     document.getElementById('editId').value = id;
-                    document.getElementById('editDialect').value = config.dialect;
-                    document.getElementById('editHostname').value = config.dbCredentials.hostname;
-                    document.getElementById('editPort').value = config.dbCredentials.port;
-                    document.getElementById('editDatabase').value = config.dbCredentials.database;
-                    document.getElementById('editUsername').value = config.dbCredentials.username;
-                    document.getElementById('editPassword').value = config.dbCredentials.password;
+                    document.getElementById('dialect').value = config.dialect;
+                    document.getElementById('hostname').value = config.dbCredentials.hostname;
+                    document.getElementById('port').value = config.dbCredentials.port;
+                    document.getElementById('database').value = config.dbCredentials.database;
+                    document.getElementById('username').value = config.dbCredentials.username;
+                    document.getElementById('password').value = config.dbCredentials.password;
 
-                    document.getElementById('editModal').style.display = 'block';
+                    document.getElementById('databaseModal').style.display = 'block';
                 } else {
                     showAlert('error', 'Error loading database configuration for editing');
                 }
@@ -566,8 +823,8 @@
             }
         }
 
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
+        function closeModal() {
+            document.getElementById('databaseModal').style.display = 'none';
         }
 
         async function deleteDatabase(id) {
@@ -585,6 +842,12 @@
                         if (runningStudios.has(id)) {
                             stopStudio(id);
                         }
+                        // Reset selection if this was the selected database
+                        if (selectedDatabase === id) {
+                            selectedDatabase = null;
+                            document.getElementById('welcomeScreen').style.display = 'block';
+                            document.getElementById('databaseDetails').classList.remove('active');
+                        }
                         loadDatabases();
                     } else {
                         showAlert('error', result.message);
@@ -598,7 +861,7 @@
 
         async function launchStudio(id) {
             try {
-                const response = await fetch(`/api/studio/launch/${id}`, {
+                const response = await fetch(`/api/databases/launch/${id}`, {
                     method: 'POST',
                 });
 
@@ -611,6 +874,9 @@
                     });
                     showAlert('success', `Drizzle Studio launched successfully! Access it at: ${result.url}`);
                     loadDatabases();
+                    if (selectedDatabase === id) {
+                        selectDatabase(id); // Refresh the details view
+                    }
                 } else {
                     showAlert('error', result.message);
                 }
@@ -632,32 +898,15 @@
                     runningStudios.delete(id);
                     showAlert('success', result.message);
                     loadDatabases();
+                    if (selectedDatabase === id) {
+                        selectDatabase(id); // Refresh the details view
+                    }
                 } else {
                     showAlert('error', result.message);
                 }
             } catch (error) {
                 showAlert('error', 'Error stopping Drizzle Studio');
                 console.error('Error:', error);
-            }
-        }
-
-        function updateStudiosList() {
-            const studiosList = document.getElementById('studiosList');
-            
-            if (runningStudios.size === 0) {
-                studiosList.innerHTML = '<p style="text-align: center; color: #666; padding: 10px;">No studio instances running</p>';
-            } else {
-                studiosList.innerHTML = Array.from(runningStudios.entries()).map(([id, studio]) => `
-                    <div class="studio-item">
-                        <div class="studio-info">
-                            <div><strong>Database ID:</strong> ${id}</div>
-                            <div><strong>URL:</strong> <a href="${studio.url}" target="_blank" class="studio-url">${studio.url}</a></div>
-                        </div>
-                        <button class="btn btn-danger" onclick="stopStudio('${id}')">
-                            <i class="fas fa-stop"></i> Stop
-                        </button>
-                    </div>
-                `).join('');
             }
         }
 
@@ -683,9 +932,9 @@
 
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modal = document.getElementById('editModal');
+            const modal = document.getElementById('databaseModal');
             if (event.target === modal) {
-                closeEditModal();
+                closeModal();
             }
         }
     </script>
