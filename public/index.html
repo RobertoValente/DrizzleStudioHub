@@ -51,23 +51,16 @@
 
         .main-content {
             display: flex;
-            gap: 40px;
+            justify-content: center;
             align-items: flex-start;
         }
 
-        .sidebar {
-            flex: 0 0 300px;
-            background: #262626;
-            border-radius: 12px;
-            padding: 24px;
-            border: 1px solid #404040;
-        }
-
         .content {
-            flex: 1;
+            width: 100%;
+            max-width: 800px;
             background: #262626;
             border-radius: 12px;
-            padding: 24px;
+            padding: 32px;
             border: 1px solid #404040;
             min-height: 500px;
         }
@@ -104,16 +97,26 @@
             background: #2563eb;
         }
 
-        .database-list {
-            list-style: none;
+        .content h2 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #ffffff;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .databases-list {
+            margin-top: 24px;
         }
 
         .database-item {
             background: #1f1f1f;
             border: 1px solid #404040;
             border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 8px;
+            padding: 20px;
+            margin-bottom: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
@@ -129,54 +132,32 @@
             border-color: #3b82f6;
         }
 
+        .database-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
         .database-name {
             font-weight: 500;
             color: #ffffff;
-            margin-bottom: 4px;
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .database-info {
-            font-size: 12px;
+            font-size: 14px;
             color: #9ca3af;
+            display: flex;
+            gap: 20px;
         }
 
         .database-actions {
-            position: absolute;
-            top: 50%;
-            right: 16px;
-            transform: translateY(-50%);
             display: flex;
-            gap: 4px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .database-item:hover .database-actions {
-            opacity: 1;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .action-btn:hover {
-            background: #404040;
-            color: #ffffff;
-        }
-
-        .action-btn.delete:hover {
-            background: #dc2626;
-            color: white;
+            gap: 8px;
         }
 
         .status-indicator {
@@ -193,14 +174,47 @@
             box-shadow: 0 0 6px #10b981;
         }
 
-        .content h2 {
-            font-size: 1.1rem;
+        .action-btn {
+            background: #374151;
+            border: none;
+            color: #e5e7eb;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
             font-weight: 500;
-            color: #ffffff;
-            margin-bottom: 20px;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
+        }
+
+        .action-btn:hover {
+            background: #4b5563;
+        }
+
+        .action-btn.delete {
+            background: #dc2626;
+        }
+
+        .action-btn.delete:hover {
+            background: #b91c1c;
+        }
+
+        .launch-btn {
+            background: #3b82f6;
+        }
+
+        .launch-btn:hover {
+            background: #2563eb;
+        }
+
+        .stop-btn {
+            background: #dc2626;
+        }
+
+        .stop-btn:hover {
+            background: #b91c1c;
         }
 
         .welcome-screen {
@@ -220,10 +234,6 @@
             color: #ffffff;
             margin-bottom: 12px;
             font-weight: 400;
-        }
-
-        .database-details {
-            display: none;
         }
 
         .database-details.active {
@@ -523,7 +533,7 @@
         <div class="alert alert-error" id="errorAlert"></div>
 
         <div class="main-content">
-            <div class="sidebar">
+            <div class="content">
                 <h2><i class="fas fa-database"></i> Databases</h2>
                 <button class="add-button" onclick="openAddModal()">
                     <i class="fas fa-plus"></i> Add Database
@@ -534,14 +544,12 @@
                     <p>Loading...</p>
                 </div>
                 
-                <ul class="database-list" id="databasesList"></ul>
-            </div>
+                <div id="databasesList" class="databases-list"></div>
 
-            <div class="content">
-                <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-screen" id="welcomeScreen" style="display: none;">
                     <i class="fas fa-mouse-pointer"></i>
                     <h3>Select a database</h3>
-                    <p>Choose a database from the sidebar to view details and launch Drizzle Studio</p>
+                    <p>Choose a database from the list to view details and launch Drizzle Studio</p>
                 </div>
 
                 <div class="database-details" id="databaseDetails">
@@ -672,23 +680,39 @@
                             const isRunning = runningStudios.has(id);
                             
                             return `
-                                <li class="database-item" data-id="${id}" onclick="selectDatabase('${id}')">
-                                    <div class="database-name">
-                                        <span class="status-indicator ${isRunning ? 'running' : ''}"></span>
-                                        ${config.dbCredentials.database}
+                                <div class="database-item" data-id="${id}">
+                                    <div class="database-header">
+                                        <div class="database-name">
+                                            <span class="status-indicator ${isRunning ? 'running' : ''}"></span>
+                                            ${config.dbCredentials.database}
+                                            ${isRunning ? '<span style="color: #10b981; font-size: 0.9em; margin-left: 8px;">• Running</span>' : ''}
+                                        </div>
+                                        <div class="database-actions">
+                                            ${!isRunning ? 
+                                                `<button class="action-btn launch-btn" onclick="launchStudio('${id}')">
+                                                    <i class="fas fa-play"></i> Launch Studio
+                                                </button>` : 
+                                                `<a href="${runningStudios.get(id)?.url}" target="_blank" class="action-btn launch-btn" style="text-decoration: none;">
+                                                    <i class="fas fa-external-link-alt"></i> Open Studio
+                                                </a>
+                                                <button class="action-btn stop-btn" onclick="stopStudio('${id}')">
+                                                    <i class="fas fa-stop"></i> Stop
+                                                </button>`
+                                            }
+                                            <button class="action-btn" onclick="editDatabase('${id}')">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="action-btn delete" onclick="deleteDatabase('${id}')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="database-info">
-                                        ${config.dbCredentials.hostname}:${config.dbCredentials.port}
+                                        <span><strong>Host:</strong> ${config.dbCredentials.hostname}:${config.dbCredentials.port}</span>
+                                        <span><strong>Username:</strong> ${config.dbCredentials.username}</span>
+                                        <span><strong>Dialect:</strong> ${config.dialect}</span>
                                     </div>
-                                    <div class="database-actions">
-                                        <button class="action-btn" onclick="event.stopPropagation(); editDatabase('${id}')" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="action-btn delete" onclick="event.stopPropagation(); deleteDatabase('${id}')" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </li>
+                                </div>
                             `;
                         }).join('');
                     }
@@ -700,89 +724,6 @@
                 console.error('Error:', error);
             } finally {
                 loading.style.display = 'none';
-            }
-        }
-
-        async function selectDatabase(id) {
-            // Update selection
-            document.querySelectorAll('.database-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            document.querySelector(`[data-id="${id}"]`).classList.add('active');
-            
-            selectedDatabase = id;
-            
-            // Hide welcome screen and show details
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('databaseDetails').classList.add('active');
-            
-            // Load database details
-            try {
-                const response = await fetch(`/api/databases/${id}`);
-                const result = await response.json();
-
-                if (result.status && result.data) {
-                    const config = result.data.content;
-                    const isRunning = runningStudios.has(id);
-                    const studioInfo = runningStudios.get(id);
-                    
-                    document.getElementById('databaseDetails').innerHTML = `
-                        <div class="detail-header">
-                            <div class="detail-info">
-                                <div class="detail-title">
-                                    <span class="status-indicator ${isRunning ? 'running' : ''}"></span>
-                                    ${config.dbCredentials.database}
-                                    ${isRunning ? '<span style="color: #10b981; font-size: 0.8em;">• Running</span>' : ''}
-                                </div>
-                                <div class="detail-subtitle">
-                                    ${config.dialect} • ${config.dbCredentials.hostname}:${config.dbCredentials.port}
-                                </div>
-                            </div>
-                            <div class="detail-actions">
-                                ${!isRunning ? 
-                                    `<button class="btn" onclick="launchStudio('${id}')">
-                                        <i class="fas fa-play"></i> Launch Studio
-                                    </button>` : 
-                                    `<a href="${studioInfo.url}" target="_blank" class="studio-link">
-                                        <i class="fas fa-external-link-alt"></i> Open Studio
-                                    </a>
-                                    <button class="btn btn-danger" onclick="stopStudio('${id}')">
-                                        <i class="fas fa-stop"></i> Stop
-                                    </button>`
-                                }
-                                <button class="btn btn-secondary" onclick="editDatabase('${id}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="connection-details">
-                            <div class="detail-card">
-                                <h4>Host</h4>
-                                <p>${config.dbCredentials.hostname}</p>
-                            </div>
-                            <div class="detail-card">
-                                <h4>Port</h4>
-                                <p>${config.dbCredentials.port}</p>
-                            </div>
-                            <div class="detail-card">
-                                <h4>Database</h4>
-                                <p>${config.dbCredentials.database}</p>
-                            </div>
-                            <div class="detail-card">
-                                <h4>Username</h4>
-                                <p>${config.dbCredentials.username}</p>
-                            </div>
-                            <div class="detail-card">
-                                <h4>Dialect</h4>
-                                <p>${config.dialect}</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error loading database details:', error);
-                showAlert('error', 'Error loading database details');
             }
         }
 
@@ -845,8 +786,6 @@
                         // Reset selection if this was the selected database
                         if (selectedDatabase === id) {
                             selectedDatabase = null;
-                            document.getElementById('welcomeScreen').style.display = 'block';
-                            document.getElementById('databaseDetails').classList.remove('active');
                         }
                         loadDatabases();
                     } else {
@@ -874,9 +813,6 @@
                     });
                     showAlert('success', `Drizzle Studio launched successfully! Access it at: ${result.url}`);
                     loadDatabases();
-                    if (selectedDatabase === id) {
-                        selectDatabase(id); // Refresh the details view
-                    }
                 } else {
                     showAlert('error', result.message);
                 }
@@ -898,9 +834,6 @@
                     runningStudios.delete(id);
                     showAlert('success', result.message);
                     loadDatabases();
-                    if (selectedDatabase === id) {
-                        selectDatabase(id); // Refresh the details view
-                    }
                 } else {
                     showAlert('error', result.message);
                 }
