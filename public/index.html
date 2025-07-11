@@ -109,112 +109,240 @@
 
         .databases-list {
             margin-top: 24px;
+            display: grid;
+            gap: 16px;
         }
 
         .database-item {
-            background: #1f1f1f;
+            background: linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 100%);
             border: 1px solid #404040;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 12px;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .database-item:nth-child(1) { animation-delay: 0.1s; }
+        .database-item:nth-child(2) { animation-delay: 0.2s; }
+        .database-item:nth-child(3) { animation-delay: 0.3s; }
+        .database-item:nth-child(4) { animation-delay: 0.4s; }
+        .database-item:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .database-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .database-item:hover::before {
+            transform: translateX(0);
         }
 
         .database-item:hover {
-            background: #2a2a2a;
+            background: linear-gradient(135deg, #2a2a2a 0%, #333333 100%);
             border-color: #525252;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         .database-item.active {
-            background: #1e40af;
-            border-color: #3b82f6;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            border-color: #60a5fa;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .database-item::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
+            background-size: contain;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        .database-item:hover::after {
+            opacity: 0.6;
         }
 
         .database-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(64, 64, 64, 0.3);
         }
 
         .database-name {
-            font-weight: 500;
+            font-weight: 600;
             color: #ffffff;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             gap: 12px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .database-info {
             font-size: 14px;
-            color: #9ca3af;
+            color: #cbd5e1;
             display: flex;
-            gap: 20px;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .database-info span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .database-info strong {
+            color: #94a3b8;
+            font-weight: 500;
         }
 
         .database-actions {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .status-indicator {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: #6b7280;
             display: inline-block;
             margin-right: 8px;
+            position: relative;
+            box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.2);
+            transition: all 0.3s ease;
         }
 
         .status-indicator.running {
             background: #10b981;
-            box-shadow: 0 0 6px #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3), 0 0 8px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3), 0 0 8px rgba(16, 185, 129, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2), 0 0 12px rgba(16, 185, 129, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3), 0 0 8px rgba(16, 185, 129, 0.4);
+            }
         }
 
         .action-btn {
-            background: #374151;
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
             border: none;
             color: #e5e7eb;
             cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
             font-size: 13px;
             font-weight: 500;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
         }
 
         .action-btn:hover {
-            background: #4b5563;
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn:disabled {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn:disabled:hover {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            transform: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .action-btn.delete {
-            background: #dc2626;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
         }
 
         .action-btn.delete:hover {
-            background: #b91c1c;
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
         }
 
         .launch-btn {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         }
 
         .launch-btn:hover {
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
         }
 
         .stop-btn {
-            background: #dc2626;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         }
 
         .stop-btn:hover {
-            background: #b91c1c;
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
         }
 
         .welcome-screen {
@@ -476,6 +604,38 @@
             .header h1 {
                 font-size: 2rem;
             }
+
+            .database-item {
+                padding: 20px;
+                margin-bottom: 12px;
+            }
+
+            .database-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .database-actions {
+                width: 100%;
+                justify-content: flex-start;
+                gap: 8px;
+            }
+
+            .action-btn {
+                flex: 1;
+                justify-content: center;
+                min-width: 0;
+            }
+
+            .database-info {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .database-name {
+                font-size: 1.1rem;
+            }
         }
 
         .loading {
@@ -524,9 +684,9 @@
         <div class="header">
             <h1>
                 <span class="emoji">👋</span>
-                Welcome to Drizzle Studio
+                Welcome to Drizzle Studio Hub
             </h1>
-            <p>Connecting to the Drizzle Kit on localhost:4983</p>
+            <p>Access the Drizzle Studio on <a style="text-underline-offset: 2px; color: #2563eb;" href="https://local.drizzle.studio" target="_blank">local.drizzle.studio</a></p>
         </div>
 
         <div class="alert alert-success" id="successAlert"></div>
@@ -563,7 +723,7 @@
     <div class="modal" id="databaseModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle"><i class="fas fa-plus"></i> Add Database</h3>
+                <h3 id="modalTitle">Add Database</h3>
                 <button class="close" onclick="closeModal()">&times;</button>
             </div>
             <form id="databaseForm">
@@ -608,11 +768,12 @@
 
     <script>
         let selectedDatabase = null;
-        let runningStudios = new Map();
+        let currentStudio = null;
 
         // Load databases on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadDatabases();
+            loadStudioStatus();
         });
 
         // Form submission for creating/updating database
@@ -653,12 +814,30 @@
             }
         });
 
+        async function loadStudioStatus() {
+            try {
+                const response = await fetch('/api/studio/status');
+                const result = await response.json();
+                
+                if (result.status) {
+                    currentStudio = result.data;
+                } else {
+                    currentStudio = null;
+                }
+            } catch (error) {
+                console.error('Error loading studio status:', error);
+                currentStudio = null;
+            }
+        }
+
         async function loadDatabases() {
             const loading = document.getElementById('loading');
             const list = document.getElementById('databasesList');
             
             loading.style.display = 'block';
             list.innerHTML = '';
+            
+            await loadStudioStatus();
 
             try {
                 const response = await fetch('/api/databases');
@@ -677,7 +856,7 @@
                         list.innerHTML = result.data.map(db => {
                             const id = db.name.replace('.json', '');
                             const config = db.content;
-                            const isRunning = runningStudios.has(id);
+                            const isRunning = currentStudio && currentStudio.id === id;
                             
                             return `
                                 <div class="database-item" data-id="${id}">
@@ -688,15 +867,19 @@
                                             ${isRunning ? '<span style="color: #10b981; font-size: 0.9em; margin-left: 8px;">• Running</span>' : ''}
                                         </div>
                                         <div class="database-actions">
-                                            ${!isRunning ? 
+                                            ${!isRunning && !currentStudio ? 
                                                 `<button class="action-btn launch-btn" onclick="launchStudio('${id}')">
                                                     <i class="fas fa-play"></i> Launch Studio
                                                 </button>` : 
-                                                `<a href="${runningStudios.get(id)?.url}" target="_blank" class="action-btn launch-btn" style="text-decoration: none;">
+                                            isRunning ? 
+                                                `<a href="https://local.drizzle.studio" target="_blank" class="action-btn launch-btn" style="text-decoration: none;">
                                                     <i class="fas fa-external-link-alt"></i> Open Studio
                                                 </a>
                                                 <button class="action-btn stop-btn" onclick="stopStudio('${id}')">
                                                     <i class="fas fa-stop"></i> Stop
+                                                </button>` :
+                                                `<button class="action-btn" disabled title="Another studio is running for ${currentStudio.id}">
+                                                    <i class="fas fa-play"></i> Launch Studio
                                                 </button>`
                                             }
                                             <button class="action-btn" onclick="editDatabase('${id}')">
@@ -728,7 +911,7 @@
         }
 
         function openAddModal() {
-            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus"></i> Add Database';
+            document.getElementById('modalTitle').innerHTML = 'Add Database';
             document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> Save Database';
             document.getElementById('databaseForm').reset();
             document.getElementById('editId').value = '';
@@ -743,7 +926,7 @@
                 if (result.status && result.data) {
                     const config = result.data.content;
                     
-                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Database';
+                    document.getElementById('modalTitle').innerHTML = 'Edit Database';
                     document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> Update Database';
                     
                     document.getElementById('editId').value = id;
@@ -779,8 +962,8 @@
                     
                     if (result.status) {
                         showAlert('success', result.message);
-                        // Stop studio if running
-                        if (runningStudios.has(id)) {
+                        // Stop studio if running for this database
+                        if (currentStudio && currentStudio.id === id) {
                             stopStudio(id);
                         }
                         // Reset selection if this was the selected database
@@ -800,18 +983,19 @@
 
         async function launchStudio(id) {
             try {
-                const response = await fetch(`/api/databases/launch/${id}`, {
+                const response = await fetch(`/api/studio/launch/${id}`, {
                     method: 'POST',
                 });
 
                 const result = await response.json();
                 
                 if (result.status) {
-                    runningStudios.set(id, {
+                    currentStudio = {
+                        id: id,
                         port: result.port,
                         url: result.url
-                    });
-                    showAlert('success', `Drizzle Studio launched successfully! Access it at: ${result.url}`);
+                    };
+                    showAlert('success', `Drizzle Studio launched successfully!`);
                     loadDatabases();
                 } else {
                     showAlert('error', result.message);
@@ -831,7 +1015,7 @@
                 const result = await response.json();
                 
                 if (result.status) {
-                    runningStudios.delete(id);
+                    currentStudio = null;
                     showAlert('success', result.message);
                     loadDatabases();
                 } else {

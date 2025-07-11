@@ -1,26 +1,22 @@
 const router = require('express').Router();
 const path = require('path');
 const fs = require('fs');
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 
-// Store running studio processes
-const runningStudios = new Map();
+let currentStudio = null;
 
-router.post('/launch/:id', (req, res) => {
+router.post('/launch/:id', async (req, res) => {
     const { id } = req.params;
     
     if (!id) {
         return res.json({ status: false, message: 'Bad Request: Missing Parameter ID' });
     }
 
-    // Check if studio is already running for this database
-    if (runningStudios.has(id)) {
-        const studio = runningStudios.get(id);
+    if (currentStudio) {
         return res.json({ 
-            status: true, 
-            message: 'Studio is already running for this database',
-            port: studio.port,
-            url: `http://localhost:${studio.port}`
+            status: false, 
+            message: `Another Drizzle Studio is already running for database "${currentStudio.databaseId}". Stop it first to launch a new one.`,
+            runningDatabase: currentStudio.databaseId
         });
     }
 
@@ -35,14 +31,51 @@ router.post('/launch/:id', (req, res) => {
 
     try {
         const config = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        const port = 4983;
         
-        // Find available port (starting from 4000)
-        const port = findAvailablePort();
+        const portInUse = await isPortInUse(port);
+        if (portInUse) {
+            console.log(`Port ${port} is already in use, attempting to find and kill existing process...`);
+            
+            try {
+                await new Promise((resolve, reject) => {
+                    exec(`lsof -ti :${port}`, (error, stdout, stderr) => {
+                        if (error) {
+                            console.log('No process found using the port');
+                            resolve();
+                            return;
+                        }
+                        
+                        const pid = stdout.trim();
+                        if (pid) {
+                            console.log(`Killing process ${pid} that was using port ${port}`);
+                            exec(`kill -9 ${pid}`, (killError) => {
+                                if (killError) {
+                                    console.error('Error killing process:', killError);
+                                    reject(killError);
+                                } else {
+                                    console.log(`Successfully killed process ${pid}`);
+                                    resolve();
+                                }
+                            });
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+            } catch (error) {
+                console.error('Error handling port cleanup:', error);
+                return res.json({ 
+                    status: false, 
+                    message: `Port ${port} is already in use and could not be freed. Please try again.` 
+                });
+            }
+        }
         
-        // Create Drizzle config file for this database
         const drizzleConfigPath = createDrizzleConfig(id, config);
-        
-        // Launch Drizzle Studio
         const studioProcess = spawn('npx', ['drizzle-kit', 'studio', '--config', drizzleConfigPath, '--port', port.toString()], {
             cwd: path.join(__dirname, '../..'),
             detached: false,
@@ -54,25 +87,28 @@ router.post('/launch/:id', (req, res) => {
 
         studioProcess.stdout.on('data', (data) => {
             stdout += data.toString();
+            //console.log(`Studio stdout: ${data}`);
         });
 
         studioProcess.stderr.on('data', (data) => {
             stderr += data.toString();
+            //console.log(`Studio stderr: ${data}`);
         });
 
         // Store the process
-        runningStudios.set(id, {
+        currentStudio = {
+            databaseId: id,
             process: studioProcess,
             port: port,
             configPath: drizzleConfigPath
-        });
+        };
 
         // Handle process events
         studioProcess.on('error', (error) => {
-            console.error(`Studio process error for ${id}:`, error);
-            console.error(`Stdout: ${stdout}`);
-            console.error(`Stderr: ${stderr}`);
-            runningStudios.delete(id);
+            //console.error(`Studio process error for ${id}:`, error);
+            //console.error(`Stdout: ${stdout}`);
+            //console.error(`Stderr: ${stderr}`);
+            currentStudio = null;
             cleanupDrizzleConfig(drizzleConfigPath);
         });
 
@@ -82,26 +118,36 @@ router.post('/launch/:id', (req, res) => {
                 console.error(`Stdout: ${stdout}`);
                 console.error(`Stderr: ${stderr}`);
             }
-            runningStudios.delete(id);
+            currentStudio = null;
             cleanupDrizzleConfig(drizzleConfigPath);
         });
 
-        // Give the process a moment to start
-        setTimeout(() => {
-            if (runningStudios.has(id)) {
-                return res.json({
-                    status: true,
-                    message: 'Drizzle Studio launched successfully!',
-                    port: port,
-                    url: `http://localhost:${port}`
-                });
+        setTimeout(async () => {
+            if (currentStudio && currentStudio.databaseId === id) {
+                const isRunning = await isPortInUse(port);
+                
+                if (isRunning) {
+                    return res.json({
+                        status: true,
+                        message: 'Drizzle Studio launched successfully!',
+                        port: port,
+                        url: `https://local.drizzle.studio`
+                    });
+                } else {
+                    currentStudio = null;
+                    cleanupDrizzleConfig(drizzleConfigPath);
+                    return res.json({
+                        status: false,
+                        message: 'Failed to launch Drizzle Studio - process started but port not accessible'
+                    });
+                }
             } else {
                 return res.json({
                     status: false,
-                    message: 'Failed to launch Drizzle Studio'
+                    message: 'Failed to launch Drizzle Studio - process exited'
                 });
             }
-        }, 2000);
+        }, 5000);
 
     } catch (error) {
         console.error('-> Error launching studio:', error);
@@ -119,21 +165,41 @@ router.post('/stop/:id', (req, res) => {
         return res.json({ status: false, message: 'Bad Request: Missing Parameter ID' });
     }
 
-    if (!runningStudios.has(id)) {
+    if (!currentStudio || currentStudio.databaseId !== id) {
         return res.json({ status: false, message: 'No studio instance running for this database' });
     }
 
     try {
-        const studio = runningStudios.get(id);
-        
-        // Kill the process
-        if (studio.process && !studio.process.killed) {
-            studio.process.kill('SIGTERM');
+        if (currentStudio.process && !currentStudio.process.killed && currentStudio.process.pid) {
+            console.log(`Stopping studio process for ${id} (PID: ${currentStudio.process.pid})`);
+            killProcessTree(currentStudio.process.pid);
         }
         
-        // Cleanup
-        runningStudios.delete(id);
-        cleanupDrizzleConfig(studio.configPath);
+        exec(`lsof -ti :${currentStudio.port}`, (error, stdout, stderr) => {
+            if (!error && stdout.trim()) {
+                const pids = stdout.trim().split('\n');
+                pids.forEach(pid => {
+                    try {
+                        process.kill(pid, 'SIGTERM');
+                        console.log(`Killed process ${pid} using port ${currentStudio.port}`);
+                        
+                        setTimeout(() => {
+                            try {
+                                process.kill(pid, 'SIGKILL');
+                            } catch (e) {
+                                // Process already dead
+                            }
+                        }, 2000);
+                    } catch (err) {
+                        console.log(`Process ${pid} already dead`);
+                    }
+                });
+            }
+        });
+        
+        const configPath = currentStudio.configPath;
+        currentStudio = null;
+        cleanupDrizzleConfig(configPath);
         
         return res.json({
             status: true,
@@ -148,29 +214,92 @@ router.post('/stop/:id', (req, res) => {
     }
 });
 
-router.get('/status', (req, res) => {
-    const studios = Array.from(runningStudios.entries()).map(([id, studio]) => ({
-        id,
-        port: studio.port,
-        url: `http://localhost:${studio.port}`
-    }));
+router.post('/stop', (req, res) => {
+    if (!currentStudio) {
+        return res.json({ status: false, message: 'No studio instance is currently running' });
+    }
+
+    try {
+        if (currentStudio.process && !currentStudio.process.killed && currentStudio.process.pid) {
+            console.log(`Stopping studio process for ${currentStudio.databaseId} (PID: ${currentStudio.process.pid})`);
+            killProcessTree(currentStudio.process.pid);
+        }
+        
+        exec(`lsof -ti :${currentStudio.port}`, (error, stdout, stderr) => {
+            if (!error && stdout.trim()) {
+                const pids = stdout.trim().split('\n');
+                pids.forEach(pid => {
+                    try {
+                        process.kill(pid, 'SIGTERM');
+                        console.log(`Killed process ${pid} using port ${currentStudio.port}`);
+                        
+                        setTimeout(() => {
+                            try {
+                                process.kill(pid, 'SIGKILL');
+                            } catch (e) {
+                                // Process already dead
+                            }
+                        }, 2000);
+                    } catch (err) {
+                        console.log(`Process ${pid} already dead`);
+                    }
+                });
+            }
+        });
+        
+        const configPath = currentStudio.configPath;
+        const databaseId = currentStudio.databaseId;
+        currentStudio = null;
+        cleanupDrizzleConfig(configPath);
+        
+        return res.json({
+            status: true,
+            message: `Drizzle Studio stopped successfully! (was running for database: ${databaseId})`
+        });
+    } catch (error) {
+        console.error('-> Error stopping studio:', error);
+        return res.status(500).json({ 
+            status: false, 
+            message: 'Internal Server Error while stopping Drizzle Studio' 
+        });
+    }
+});
+
+router.get('/status', async (req, res) => {
+    if (!currentStudio) {
+        return res.json({
+            status: true,
+            data: null
+        });
+    }
+
+    const isRunning = await isPortInUse(currentStudio.port);
+    
+    if (!isRunning || currentStudio.process.killed) {
+        console.log('Studio process detected as not running, cleaning up...');
+        if (currentStudio.process && !currentStudio.process.killed) {
+            killProcessTree(currentStudio.process.pid);
+        }
+        cleanupDrizzleConfig(currentStudio.configPath);
+        currentStudio = null;
+        
+        return res.json({
+            status: true,
+            data: null
+        });
+    }
+
+    const studio = {
+        id: currentStudio.databaseId,
+        port: currentStudio.port,
+        url: `https://local.drizzle.studio`
+    };
 
     return res.json({
         status: true,
-        data: studios
+        data: studio
     });
 });
-
-function findAvailablePort() {
-    const usedPorts = Array.from(runningStudios.values()).map(studio => studio.port);
-    let port = 4000;
-    
-    while (usedPorts.includes(port)) {
-        port++;
-    }
-    
-    return port;
-}
 
 function createDrizzleConfig(id, dbConfig) {
     const configPath = path.join(__dirname, `../../../drizzle.config.js`);
@@ -207,25 +336,92 @@ function cleanupDrizzleConfig(configPath) {
     }
 }
 
-// Cleanup on process exit
 process.on('exit', () => {
-    for (const [id, studio] of runningStudios.entries()) {
-        if (studio.process && !studio.process.killed) {
-            studio.process.kill('SIGTERM');
+    if (currentStudio) {
+        if (currentStudio.process && !currentStudio.process.killed && currentStudio.process.pid) {
+            killProcessTree(currentStudio.process.pid);
         }
-        cleanupDrizzleConfig(studio.configPath);
+        cleanupDrizzleConfig(currentStudio.configPath);
     }
 });
 
 process.on('SIGINT', () => {
     console.log('Shutting down studio processes...');
-    for (const [id, studio] of runningStudios.entries()) {
-        if (studio.process && !studio.process.killed) {
-            studio.process.kill('SIGTERM');
+    if (currentStudio) {
+        if (currentStudio.process && !currentStudio.process.killed && currentStudio.process.pid) {
+            killProcessTree(currentStudio.process.pid);
         }
-        cleanupDrizzleConfig(studio.configPath);
+        cleanupDrizzleConfig(currentStudio.configPath);
     }
     process.exit(0);
 });
+
+function isPortInUse(port) {
+    return new Promise((resolve) => {
+        const net = require('net');
+        const server = net.createServer();
+        
+        server.listen(port, () => {
+            server.close(() => {
+                resolve(false); // Port is free
+            });
+        });
+        
+        server.on('error', () => {
+            resolve(true); // Port is in use
+        });
+    });
+}
+
+function killProcessTree(pid) {
+    try {
+        console.log(`Attempting to kill process ${pid} and its children...`);
+        
+        exec(`pgrep -P ${pid}`, (error, stdout, stderr) => {
+            if (!error && stdout.trim()) {
+                const childPids = stdout.trim().split('\n');
+                console.log(`Found child processes: ${childPids.join(', ')}`);
+                
+                childPids.forEach(childPid => {
+                    try {
+                        process.kill(childPid, 'SIGTERM');
+                        console.log(`Killed child process ${childPid}`);
+                    } catch (err) {
+                        console.log(`Child process ${childPid} already dead or not found`);
+                    }
+                });
+                
+                setTimeout(() => {
+                    childPids.forEach(childPid => {
+                        try {
+                            process.kill(childPid, 'SIGKILL');
+                        } catch (err) {
+                            // Process already dead
+                        }
+                    });
+                }, 1000);
+            }
+        });
+        
+        try {
+            process.kill(pid, 'SIGTERM');
+            console.log(`Sent SIGTERM to process ${pid}`);
+        } catch (error) {
+            console.log(`Process ${pid} already dead or not found`);
+        }
+        
+        setTimeout(() => {
+            try {
+                process.kill(pid, 'SIGKILL');
+                console.log(`Sent SIGKILL to process ${pid}`);
+            } catch (error) {
+                console.log(`Process ${pid} already terminated`);
+            }
+        }, 3000);
+        
+    } catch (error) {
+        console.error('Error in killProcessTree:', error);
+    }
+}
 
 module.exports = router;
