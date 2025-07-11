@@ -2,6 +2,6 @@
 
 ### TO-DO:
 [ ] Encrypt Sensitive Data
-[ ] Improve UI
-[ ] Remove unncessary API Endpoints
-[ ] Add better way to get Database Connection Status
+[X] Improve UI
+[X] Remove unncessary API Endpoints
+[X] Add better way to get Database Connection Status
