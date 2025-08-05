@@ -24,3 +24,8 @@ npm install
 # Run the project
 node src/index.js
 ```
+
+# 📝 TO-DO
+[ ] Add Encryption client-side
+[ ] Add Decryption server-side
+*then will be possible to make it online (HOPEFULLY without vulnerabilities)
