@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> The Drizzle Team has officially made Drizzle Studio Gateway free for both developers and companies. With this change, I’ll no longer be updating this project, as it’s been fully replaced by Drizzle Studio Gateway - now an official product by the Drizzle Team. So… yeah, [go check it out](https://gateway.drizzle.team)!
+
 # DrizzleStudioHub
 Built for my personal use. Instead of use PHPMyAdmin, I prefer DrizzleStudio so... I create a HUB to store all my connections (locally ofc) and you can use it too!
 
@@ -24,8 +27,3 @@ npm install
 # Run the project
 node src/index.js
 ```
-
-# 📝 TO-DO
-[ ] Add Encryption client-side
-[ ] Add Decryption server-side
-*then will be possible to make it online (HOPEFULLY without vulnerabilities)
